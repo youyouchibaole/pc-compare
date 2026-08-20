@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PC 改版前后对比</title>
+<style>
+  :root {
+    --bg: #eceef1;
+    --panel: #ffffff;
+    --border: #d8dade;
+    --text: #1a1c22;
+    --muted: #6b6f78;
+    --accent: #4d7cff;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+  }
+  .topbar {
+    display: flex;
+    align-items: center;
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(236,238,241,0.98);
+    z-index: 10;
+  }
+  .topbar h1 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: 0.2px;
+  }
+  .mode-switch {
+    display: flex;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 3px;
+  }
+  .mode-switch button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 11px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+  .mode-switch button.active {
+    background: var(--accent);
+    color: #fff;
+  }
+  .mode-switch button:hover:not(.active) {
+    color: var(--text);
+  }
+  main {
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 28px;
+  }
+  .content-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto 14px;
+    gap: 24px;
+  }
+  .left-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-self: start;
+  }
+  .inline-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  .legend {
+    display: flex;
+    gap: 8px;
+  }
+  .legend-tag {
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    letter-spacing: 0.3px;
+  }
+  .hint-slot { justify-self: center; }
+  .hint {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0;
+    white-space: nowrap;
+  }
+  .mode-switch { justify-self: end; }
+
+  /* ---------- 拖拽滑块方案 ---------- */
+  .slider-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    aspect-ratio: 1728 / 1080;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    user-select: none;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    display: none;
+  }
+  .slider-wrap.visible { display: block; }
+  .slider-wrap img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+    image-rendering: -webkit-optimize-contrast;
+  }
+  .slider-wrap .img-old { z-index: 1; }
+  .slider-wrap .img-new {
+    z-index: 2;
+    clip-path: inset(0 0 0 50%);
+  }
+  .divider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background: #fff;
+    z-index: 3;
+    cursor: ew-resize;
+    box-shadow: 0 0 8px rgba(0,0,0,0.5);
+  }
+  .handle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 44px;
+    height: 44px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+    cursor: ew-resize;
+    z-index: 4;
+  }
+  .handle svg { width: 20px; height: 20px; }
+
+  /* ---------- 悬停切换方案 ---------- */
+  .hover-wrap {
+    display: none;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .hover-wrap.visible { display: block; }
+  .hover-card {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1728 / 1080;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    cursor: pointer;
+  }
+  .hover-card img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .hover-card .img-new {
+    clip-path: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .hover-card:hover .img-new {
+    opacity: 1;
+  }
+
+  .section-title {
+    max-width: 1400px;
+    margin: 0 auto 16px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.3px;
+  }
+  .module-section-title {
+    margin-top: 56px;
+    margin-bottom: 6px;
+  }
+  .module-hint {
+    max-width: 1400px;
+    margin: 0 auto 18px;
+    text-align: left;
+  }
+
+  /* ---------- 模块细节对比 ---------- */
+  .module-layout {
+    display: flex;
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: flex-start;
+  }
+  .module-nav {
+    flex: 0 0 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: sticky;
+    top: 84px;
+  }
+  .module-nav-item {
+    appearance: none;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    font-size: 13px;
+    text-align: left;
+    padding: 9px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .module-nav-item:hover {
+    background: var(--panel);
+    color: var(--text);
+  }
+  .module-nav-item.active {
+    background: var(--panel);
+    border-color: var(--border);
+    color: var(--text);
+    font-weight: 600;
+  }
+  .module-detail {
+    flex: 1;
+    min-width: 0;
+  }
+  .module-panel { display: none; }
+  .module-panel.active {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+  }
+  .module-media {
+    flex: 2.4;
+    min-width: 0;
+  }
+  .module-note-box {
+    flex: 1;
+    min-width: 0;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+  }
+  .module-note-box .note-body {
+    flex: 1;
+  }
+  .module-hover-card {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 18;
+    max-height: 1280px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--panel);
+  }
+  .module-hover-card img {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    width: calc(100% - 48px);
+    height: calc(100% - 48px);
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    cursor: pointer;
+  }
+  .module-hover-card .img-new {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .module-hover-card .img-old:hover + .img-new {
+    opacity: 1;
+  }
+  .module-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    background: rgba(0,0,0,0.6);
+    z-index: 5;
+    letter-spacing: 0.3px;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .module-badge-new { opacity: 0; }
+  .module-hover-card .img-old:hover ~ .module-badge-old { opacity: 0; }
+  .module-hover-card .img-old:hover ~ .module-badge-new { opacity: 1; }
+  .placeholder-label {
+    display: none;
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 6px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    margin: 1px;
+  }
+  .placeholder-label code {
+    font-size: 11px;
+    color: var(--muted);
+    background: rgba(0,0,0,0.05);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .module-hover-card.has-error .placeholder-label {
+    display: flex;
+  }
+  .module-hover-card.has-error:hover .placeholder-label {
+    opacity: 0.5;
+  }
+
+  /* ---------- 交互对比(视频) ---------- */
+  .video-pair {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    max-height: 640px;
+  }
+  .video-card {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    cursor: pointer;
+  }
+  .video-card video {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: calc(100% - 32px);
+    height: calc(100% - 32px);
+    object-fit: contain;
+    background: #000;
+    border-radius: 6px;
+    pointer-events: none;
+  }
+  .video-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    background: rgba(0,0,0,0.6);
+    z-index: 3;
+    letter-spacing: 0.3px;
+    pointer-events: none;
+  }
+  .video-play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    pointer-events: none;
+    transition: background 0.2s ease;
+  }
+  .video-play-btn svg { width: 20px; height: 20px; }
+  .video-card:hover .video-play-btn { background: var(--accent); }
+  .video-placeholder {
+    display: none;
+    position: absolute;
+    inset: 16px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 6px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+  }
+  .video-card.has-error .video-placeholder { display: flex; }
+  .video-card.has-error .video-play-btn { display: none; }
+
+  .video-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .video-modal.open { display: flex; }
+  .video-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+  }
+  .video-modal-content {
+    position: relative;
+    max-width: 90vw;
+    max-height: 88vh;
+    z-index: 1;
+  }
+  .video-modal-content video {
+    max-width: 90vw;
+    max-height: 88vh;
+    border-radius: 8px;
+    display: block;
+    background: #000;
+  }
+  .video-modal-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    appearance: none;
+    border: none;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .video-modal-close:hover { background: rgba(255,255,255,0.24); }
+
+  /* ---------- 文案区域 ---------- */
+  .note-box {
+    max-width: 1400px;
+    margin: 24px auto 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+  }
+  .note-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .note-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .note-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .note-status {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .note-btn {
+    appearance: none;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .note-btn:hover { color: var(--text); }
+  .note-btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .note-btn-primary:hover { color: #fff; opacity: 0.9; }
+  .note-body {
+    min-height: 90px;
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre-wrap;
+    outline: none;
+  }
+  .note-body:empty::before {
+    content: attr(data-placeholder);
+    color: var(--muted);
+  }
+  .note-body[contenteditable="true"] {
+    background: rgba(0,0,0,0.02);
+    box-shadow: inset 0 0 0 1px var(--accent);
+    border-radius: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>PC 改版前后对比 · 主页</h1>
+</div>
+
+<main>
+  <div class="content-header">
+    <div class="left-group">
+      <h2 class="inline-title">主体对比</h2>
+      <div class="legend">
+        <span class="legend-tag legend-old">旧版</span>
+        <span class="legend-tag legend-new">新版</span>
+      </div>
+    </div>
+    <div class="hint-slot">
+      <p class="hint" id="hint-slider" style="display:none;">拖动中间分割线，左侧旧版 / 右侧新版</p>
+      <p class="hint" id="hint-hover">鼠标悬停图片查看新版，移出恢复旧版</p>
+    </div>
+    <div class="mode-switch">
+      <button id="btn-hover" class="active">悬停切换</button>
+      <button id="btn-slider">拖拽滑块</button>
+    </div>
+  </div>
+
+  <!-- 拖拽滑块 -->
+  <div class="slider-wrap" id="slider-wrap">
+    <img class="img-old" src="Assets/main-old.png" alt="旧版">
+    <img class="img-new" id="slider-new-img" src="Assets/main-new.png" alt="新版">
+    <div class="divider" id="divider">
+      <div class="handle">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 6L2 12L8 18" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 6L22 12L16 18" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- 悬停切换 -->
+  <div class="hover-wrap visible" id="hover-wrap">
+    <div class="hover-card">
+      <img class="img-old" src="Assets/main-old.png" alt="旧版">
+      <img class="img-new" src="Assets/main-new.png" alt="新版">
+    </div>
+  </div>
+
+  <!-- 主体对比文案 -->
+  <div class="note-box">
+    <div class="note-header">
+      <span class="note-title">改动说明</span>
+      <div class="note-actions">
+        <span class="note-status" id="note-status"></span>
+        <button class="note-btn" id="note-edit">编辑</button>
+        <button class="note-btn note-btn-primary" id="note-save" style="display:none;">保存</button>
+      </div>
+    </div>
+    <div class="note-body" id="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+  </div>
+
+  <h2 class="section-title module-section-title">模块细节对比</h2>
+  <p class="hint module-hint">鼠标悬停图片查看新版，移出恢复旧版</p>
+
+  <div class="module-layout">
+    <div class="module-nav" id="module-nav">
+      <button class="module-nav-item active" data-module="watchlist">自选列表</button>
+      <button class="module-nav-item" data-module="chart">图表</button>
+      <button class="module-nav-item" data-module="optionchain">期权链</button>
+      <button class="module-nav-item" data-module="multileg">多腿交易面板</button>
+      <button class="module-nav-item" data-module="positions">持仓订单</button>
+      <button class="module-nav-item" data-module="quote">行情面板</button>
+      <button class="module-nav-item" data-module="trade">交易面板</button>
+      <button class="module-nav-item" data-module="advtrade">高级交易弹窗</button>
+    </div>
+
+    <div class="module-detail" id="module-detail">
+      <div class="module-panel active" data-module="watchlist">
+        <div class="module-media">
+          <div class="module-hover-card">
+            <img class="img-old" src="Assets/module-watchlist-old.png" alt="旧版" onerror="this.style.display='none';this.closest('.module-hover-card').classList.add('has-error')">
+            <img class="img-new" src="Assets/module-watchlist-new.png" alt="新版" onerror="this.style.display='none';this.closest('.module-hover-card').classList.add('has-error')">
+            <span class="module-badge module-badge-old">旧版</span>
+            <span class="module-badge module-badge-new">新版</span>
+            <div class="placeholder-label">占位待替换<br><code>module-watchlist-old.png</code> / <code>module-watchlist-new.png</code></div>
+          </div>
+        </div>
+        <div class="module-note-box">
+          <div class="note-header">
+            <span class="note-title">改动说明</span>
+            <div class="note-actions">
+              <span class="note-status"></span>
+              <button class="note-btn note-edit">编辑</button>
+              <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
+            </div>
+          </div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+        </div>
+      </div>
+      <div class="module-panel" data-module="chart">
+        <div class="module-media">
+          <div class="module-hover-card">
+            <img class="img-old" src="Assets/module-chart-old.png" alt="旧版" onerror="this.style.display='none';this.closest('.module-hover-card').classList.add('has-error')">
+            <img class="img-new" src="Assets/module-chart-new.png" alt="新版" onerror="this.style.display='none';this.closest('.module-hover-card').classList.add('has-error')">
+            <span class="module-badge module-badge-old">旧版</span>
+            <span class="module-badge module-badge-new">新版</span>
+            <div class="placeholder-label">占位待替换<br><code>module-chart-old.png</code> / <code>module-chart-new.png</code></div>
+          </div>
+        </div>
+        <div class="module-note-box">
+          <div class="note-header">
+            <span class="note-title">改动说明</span>
+            <div class="note-actions">
+              <span class="note-status"></span>
+              <button class="note-btn note-edit">编辑</button>
+              <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
+            </div>
+          </div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+        </div>
+      </div>
+      <div class="module-panel" data-module="optionchain">
+        <div class="module-media">
+          <div class="module-hover-card">
+            <img class="img-old" src="Assets/module-optionchain-old.png" alt="旧版" onerror="this.style.display='none';this.closest('.module-hover-card').classList.add('has-error')">
+            <img class="img-new" src="Assets/module-optionchain-new.png" alt="新版" onerror="this.style.display='none';this.closest('.module-hover-card').classList.add('has-error')">
+            <span class="module-badge module-badge-old">旧版</span>
+            <span class="module-badge module-badge-new">新版</span>
+            <div class="placeholder-label">占位待替换<br><code>module-optionchain-old.png</code> / <code>module-optionchain-new.png</code></div>
+          </div>
+        </div>
+        <div class="module-note-box">
+          <div class="note-header">
+            <span class="note-title">改动说明</span>
+            <div class="note-actions">
+              <span class="note-status"></span>
+              <button class="note-btn note-edit">编辑</button>
+              <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
+            </div>
+          </div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+        </div>
+      </div>
+      <div class="module-panel" data-module="multileg">
+        <div class="module-media">
+          <div class="module-hover-card">
+            <img class="img-old" src="Assets/module-multileg-old.png" alt="旧版" onerror="this.style.display='none';this.closest('.module-hover-card').classList.add('has-error')">
+            <img class="img-new" src="Assets/module-multileg-new.png" alt="新版" onerror="this.style.display='none';this.closest('.module-hover-card').classList.add('has-error')">
+            <span class="module-badge module-badge-old">旧版</span>
+            <span class="module-badge module-badge-new">新版</span>
+            <div class="placeholder-label">占位待替换<br><code>module-multileg-old.png</code> / <code>module-multileg-new.png</code></div>
+          </div>
+        </div>
+        <div class="module-note-box">
+          <div class="note-header">
+            <span class="note-title">改动说明</span>
+            <div class="note-actions">
+              <span class="note-status"></span>
+              <button class="note-btn note-edit">编辑</button>
+              <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
+            </div>
+          </div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+        </div>
+      </div>
+      <div class="module-panel" data-module="positions">
+        <div class="module-media">
+          <div class="module-hover-card">
+            <img class="img-old" src="Assets/module-positions-old.png" alt="旧版" onerror="this.style.display='none';this.closest('.module-hover-card').classList.add('has-error')">
+            <img class="img-new" src="Assets/module-positions-new.png" alt="新版" onerror="this.style.display='none';this.closest('.module-hover-card').classList.add('has-error')">
+            <span class="module-badge module-badge-old">旧版</span>
+            <span class="module-badge module-badge-new">新版</span>
+            <div class="placeholder-label">占位待替换<br><code>module-positions-old.png</code> / <code>module-positions-new.png</code></div>
+          </div>
+        </div>
+        <div class="module-note-box">
+          <div class="note-header">
+            <span class="note-title">改动说明</span>
+            <div class="note-actions">
+              <span class="note-status"></span>
+              <button class="note-btn note-edit">编辑</button>
+              <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
+            </div>
+          </div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+        </div>
+      </div>
+      <div class="module-panel" data-module="quote">
+        <div class="module-media">
+          <div class="module-hover-card">
+            <img class="img-old" src="Assets/module-quote-old.png" alt="旧版" onerror="this.style.display='none';this.closest('.module-hover-card').classList.add('has-error')">
+            <img class="img-new" src="Assets/module-quote-new.png" alt="新版" onerror="this.style.display='none';this.closest('.module-hover-card').classList.add('has-error')">
+            <span class="module-badge module-badge-old">旧版</span>
+            <span class="module-badge module-badge-new">新版</span>
+            <div class="placeholder-label">占位待替换<br><code>module-quote-old.png</code> / <code>module-quote-new.png</code></div>
+          </div>
+        </div>
+        <div class="module-note-box">
+          <div class="note-header">
+            <span class="note-title">改动说明</span>
+            <div class="note-actions">
+              <span class="note-status"></span>
+              <button class="note-btn note-edit">编辑</button>
+              <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
+            </div>
+          </div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+        </div>
+      </div>
+      <div class="module-panel" data-module="trade">
+        <div class="module-media">
+          <div class="module-hover-card">
+            <img class="img-old" src="Assets/module-trade-old.png" alt="旧版" onerror="this.style.display='none';this.closest('.module-hover-card').classList.add('has-error')">
+            <img class="img-new" src="Assets/module-trade-new.png" alt="新版" onerror="this.style.display='none';this.closest('.module-hover-card').classList.add('has-error')">
+            <span class="module-badge module-badge-old">旧版</span>
+            <span class="module-badge module-badge-new">新版</span>
+            <div class="placeholder-label">占位待替换<br><code>module-trade-old.png</code> / <code>module-trade-new.png</code></div>
+          </div>
+        </div>
+        <div class="module-note-box">
+          <div class="note-header">
+            <span class="note-title">改动说明</span>
+            <div class="note-actions">
+              <span class="note-status"></span>
+              <button class="note-btn note-edit">编辑</button>
+              <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
+            </div>
+          </div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+        </div>
+      </div>
+      <div class="module-panel" data-module="advtrade">
+        <div class="module-media">
+          <div class="module-hover-card">
+            <img class="img-old" src="Assets/module-advtrade-old.png" alt="旧版" onerror="this.style.display='none';this.closest('.module-hover-card').classList.add('has-error')">
+            <img class="img-new" src="Assets/module-advtrade-new.png" alt="新版" onerror="this.style.display='none';this.closest('.module-hover-card').classList.add('has-error')">
+            <span class="module-badge module-badge-old">旧版</span>
+            <span class="module-badge module-badge-new">新版</span>
+            <div class="placeholder-label">占位待替换<br><code>module-advtrade-old.png</code> / <code>module-advtrade-new.png</code></div>
+          </div>
+        </div>
+        <div class="module-note-box">
+          <div class="note-header">
+            <span class="note-title">改动说明</span>
+            <div class="note-actions">
+              <span class="note-status"></span>
+              <button class="note-btn note-edit">编辑</button>
+              <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
+            </div>
+          </div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title module-section-title">交互对比</h2>
+  <p class="hint module-hint">左右分别为旧版 / 新版交互录屏, 点击可放大播放</p>
+
+  <div class="module-layout">
+    <div class="module-nav" id="interaction-nav">
+      <button class="module-nav-item active" data-module="watchlist">自选列表</button>
+      <button class="module-nav-item" data-module="chart">图表</button>
+      <button class="module-nav-item" data-module="indicator">指标和划线工具</button>
+      <button class="module-nav-item" data-module="optionchain">期权链</button>
+      <button class="module-nav-item" data-module="trade">交易面板</button>
+      <button class="module-nav-item" data-module="advtrade">高级交易弹窗</button>
+    </div>
+
+    <div class="module-detail" id="interaction-detail">
+      <div class="module-panel active" data-module="watchlist">
+        <div class="module-media">
+          <div class="video-pair">
+            <div class="video-card" data-src="Assets/interaction-watchlist-old.mp4">
+              <video src="Assets/interaction-watchlist-old.mp4" muted playsinline preload="metadata" onerror="this.closest('.video-card').classList.add('has-error')"></video>
+              <div class="video-badge">旧版</div>
+              <div class="video-play-btn"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5V18.5L18 12L8 5.5Z" fill="white"/></svg></div>
+              <div class="video-placeholder">占位待替换<br><code>interaction-watchlist-old.mp4</code></div>
+            </div>
+            <div class="video-card" data-src="Assets/interaction-watchlist-new.mp4">
+              <video src="Assets/interaction-watchlist-new.mp4" muted playsinline preload="metadata" onerror="this.closest('.video-card').classList.add('has-error')"></video>
+              <div class="video-badge">新版</div>
+              <div class="video-play-btn"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5V18.5L18 12L8 5.5Z" fill="white"/></svg></div>
+              <div class="video-placeholder">占位待替换<br><code>interaction-watchlist-new.mp4</code></div>
+            </div>
+          </div>
+        </div>
+        <div class="module-note-box">
+          <div class="note-header">
+            <span class="note-title">改动说明</span>
+            <div class="note-actions">
+              <span class="note-status"></span>
+              <button class="note-btn note-edit">编辑</button>
+              <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
+            </div>
+          </div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+        </div>
+      </div>
+      <div class="module-panel" data-module="chart">
+        <div class="module-media">
+          <div class="video-pair">
+            <div class="video-card" data-src="Assets/interaction-chart-old.mp4">
+              <video src="Assets/interaction-chart-old.mp4" muted playsinline preload="metadata" onerror="this.closest('.video-card').classList.add('has-error')"></video>
+              <div class="video-badge">旧版</div>
+              <div class="video-play-btn"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5V18.5L18 12L8 5.5Z" fill="white"/></svg></div>
+              <div class="video-placeholder">占位待替换<br><code>interaction-chart-old.mp4</code></div>
+            </div>
+            <div class="video-card" data-src="Assets/interaction-chart-new.mp4">
+              <video src="Assets/interaction-chart-new.mp4" muted playsinline preload="metadata" onerror="this.closest('.video-card').classList.add('has-error')"></video>
+              <div class="video-badge">新版</div>
+              <div class="video-play-btn"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5V18.5L18 12L8 5.5Z" fill="white"/></svg></div>
+              <div class="video-placeholder">占位待替换<br><code>interaction-chart-new.mp4</code></div>
+            </div>
+          </div>
+        </div>
+        <div class="module-note-box">
+          <div class="note-header">
+            <span class="note-title">改动说明</span>
+            <div class="note-actions">
+              <span class="note-status"></span>
+              <button class="note-btn note-edit">编辑</button>
+              <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
+            </div>
+          </div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+        </div>
+      </div>
+      <div class="module-panel" data-module="indicator">
+        <div class="module-media">
+          <div class="video-pair">
+            <div class="video-card" data-src="Assets/interaction-indicator-old.mp4">
+              <video src="Assets/interaction-indicator-old.mp4" muted playsinline preload="metadata" onerror="this.closest('.video-card').classList.add('has-error')"></video>
+              <div class="video-badge">旧版</div>
+              <div class="video-play-btn"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5V18.5L18 12L8 5.5Z" fill="white"/></svg></div>
+              <div class="video-placeholder">占位待替换<br><code>interaction-indicator-old.mp4</code></div>
+            </div>
+            <div class="video-card" data-src="Assets/interaction-indicator-new.mp4">
+              <video src="Assets/interaction-indicator-new.mp4" muted playsinline preload="metadata" onerror="this.closest('.video-card').classList.add('has-error')"></video>
+              <div class="video-badge">新版</div>
+              <div class="video-play-btn"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5V18.5L18 12L8 5.5Z" fill="white"/></svg></div>
+              <div class="video-placeholder">占位待替换<br><code>interaction-indicator-new.mp4</code></div>
+            </div>
+          </div>
+        </div>
+        <div class="module-note-box">
+          <div class="note-header">
+            <span class="note-title">改动说明</span>
+            <div class="note-actions">
+              <span class="note-status"></span>
+              <button class="note-btn note-edit">编辑</button>
+              <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
+            </div>
+          </div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+        </div>
+      </div>
+      <div class="module-panel" data-module="optionchain">
+        <div class="module-media">
+          <div class="video-pair">
+            <div class="video-card" data-src="Assets/interaction-optionchain-old.mp4">
+              <video src="Assets/interaction-optionchain-old.mp4" muted playsinline preload="metadata" onerror="this.closest('.video-card').classList.add('has-error')"></video>
+              <div class="video-badge">旧版</div>
+              <div class="video-play-btn"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5V18.5L18 12L8 5.5Z" fill="white"/></svg></div>
+              <div class="video-placeholder">占位待替换<br><code>interaction-optionchain-old.mp4</code></div>
+            </div>
+            <div class="video-card" data-src="Assets/interaction-optionchain-new.mp4">
+              <video src="Assets/interaction-optionchain-new.mp4" muted playsinline preload="metadata" onerror="this.closest('.video-card').classList.add('has-error')"></video>
+              <div class="video-badge">新版</div>
+              <div class="video-play-btn"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5V18.5L18 12L8 5.5Z" fill="white"/></svg></div>
+              <div class="video-placeholder">占位待替换<br><code>interaction-optionchain-new.mp4</code></div>
+            </div>
+          </div>
+        </div>
+        <div class="module-note-box">
+          <div class="note-header">
+            <span class="note-title">改动说明</span>
+            <div class="note-actions">
+              <span class="note-status"></span>
+              <button class="note-btn note-edit">编辑</button>
+              <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
+            </div>
+          </div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+        </div>
+      </div>
+      <div class="module-panel" data-module="trade">
+        <div class="module-media">
+          <div class="video-pair">
+            <div class="video-card" data-src="Assets/interaction-trade-old.mp4">
+              <video src="Assets/interaction-trade-old.mp4" muted playsinline preload="metadata" onerror="this.closest('.video-card').classList.add('has-error')"></video>
+              <div class="video-badge">旧版</div>
+              <div class="video-play-btn"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5V18.5L18 12L8 5.5Z" fill="white"/></svg></div>
+              <div class="video-placeholder">占位待替换<br><code>interaction-trade-old.mp4</code></div>
+            </div>
+            <div class="video-card" data-src="Assets/interaction-trade-new.mp4">
+              <video src="Assets/interaction-trade-new.mp4" muted playsinline preload="metadata" onerror="this.closest('.video-card').classList.add('has-error')"></video>
+              <div class="video-badge">新版</div>
+              <div class="video-play-btn"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5V18.5L18 12L8 5.5Z" fill="white"/></svg></div>
+              <div class="video-placeholder">占位待替换<br><code>interaction-trade-new.mp4</code></div>
+            </div>
+          </div>
+        </div>
+        <div class="module-note-box">
+          <div class="note-header">
+            <span class="note-title">改动说明</span>
+            <div class="note-actions">
+              <span class="note-status"></span>
+              <button class="note-btn note-edit">编辑</button>
+              <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
+            </div>
+          </div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+        </div>
+      </div>
+      <div class="module-panel" data-module="advtrade">
+        <div class="module-media">
+          <div class="video-pair">
+            <div class="video-card" data-src="Assets/interaction-advtrade-old.mp4">
+              <video src="Assets/interaction-advtrade-old.mp4" muted playsinline preload="metadata" onerror="this.closest('.video-card').classList.add('has-error')"></video>
+              <div class="video-badge">旧版</div>
+              <div class="video-play-btn"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5V18.5L18 12L8 5.5Z" fill="white"/></svg></div>
+              <div class="video-placeholder">占位待替换<br><code>interaction-advtrade-old.mp4</code></div>
+            </div>
+            <div class="video-card" data-src="Assets/interaction-advtrade-new.mp4">
+              <video src="Assets/interaction-advtrade-new.mp4" muted playsinline preload="metadata" onerror="this.closest('.video-card').classList.add('has-error')"></video>
+              <div class="video-badge">新版</div>
+              <div class="video-play-btn"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5V18.5L18 12L8 5.5Z" fill="white"/></svg></div>
+              <div class="video-placeholder">占位待替换<br><code>interaction-advtrade-new.mp4</code></div>
+            </div>
+          </div>
+        </div>
+        <div class="module-note-box">
+          <div class="note-header">
+            <span class="note-title">改动说明</span>
+            <div class="note-actions">
+              <span class="note-status"></span>
+              <button class="note-btn note-edit">编辑</button>
+              <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
+            </div>
+          </div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div class="video-modal" id="video-modal">
+  <div class="video-modal-backdrop"></div>
+  <div class="video-modal-content">
+    <button class="video-modal-close" id="video-modal-close">✕</button>
+    <video id="video-modal-player" controls playsinline></video>
+  </div>
+</div>
+
+<script>
+  const btnHover = document.getElementById('btn-hover');
+  const btnSlider = document.getElementById('btn-slider');
+  const hoverWrap = document.getElementById('hover-wrap');
+  const sliderWrap = document.getElementById('slider-wrap');
+  const hintHover = document.getElementById('hint-slider');
+  const hintSlider = document.getElementById('hint-slider');
+  const hintHoverText = document.getElementById('hint-hover');
+
+  function setMode(mode) {
+    if (mode === 'hover') {
+      hoverWrap.classList.add('visible');
+      sliderWrap.classList.remove('visible');
+      hintHoverText.style.display = '';
+      hintSlider.style.display = 'none';
+      btnHover.classList.add('active');
+      btnSlider.classList.remove('active');
+    } else {
+      hoverWrap.classList.remove('visible');
+      sliderWrap.classList.add('visible');
+      hintHoverText.style.display = 'none';
+      hintSlider.style.display = '';
+      btnSlider.classList.add('active');
+      btnHover.classList.remove('active');
+    }
+  }
+
+  btnHover.addEventListener('click', () => setMode('hover'));
+  btnSlider.addEventListener('click', () => setMode('slider'));
+
+  // 拖拽滑块逻辑
+  const wrap = sliderWrap;
+  const divider = document.getElementById('divider');
+  const newImg = document.getElementById('slider-new-img');
+  let dragging = false;
+
+  function updatePosition(clientX) {
+    const rect = wrap.getBoundingClientRect();
+    let pct = ((clientX - rect.left) / rect.width) * 100;
+    pct = Math.max(0, Math.min(100, pct));
+    divider.style.left = pct + '%';
+    newImg.style.clipPath = `inset(0 0 0 ${pct}%)`;
+  }
+
+  divider.addEventListener('mousedown', (e) => {
+    dragging = true;
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', (e) => {
+    if (!dragging) return;
+    updatePosition(e.clientX);
+  });
+  window.addEventListener('mouseup', () => { dragging = false; });
+
+  wrap.addEventListener('click', (e) => {
+    if (e.target === divider || divider.contains(e.target)) return;
+    updatePosition(e.clientX);
+  });
+
+  // 触屏支持
+  divider.addEventListener('touchstart', () => { dragging = true; }, { passive: true });
+  window.addEventListener('touchmove', (e) => {
+    if (!dragging) return;
+    updatePosition(e.touches[0].clientX);
+  }, { passive: true });
+  window.addEventListener('touchend', () => { dragging = false; });
+
+  // 文案区域编辑保存
+  const noteBody = document.getElementById('note-body');
+  const noteEdit = document.getElementById('note-edit');
+  const noteSave = document.getElementById('note-save');
+  const noteStatus = document.getElementById('note-status');
+  const NOTE_KEY = 'pc-compare-note';
+
+  noteBody.textContent = localStorage.getItem(NOTE_KEY) || '';
+
+  noteEdit.addEventListener('click', () => {
+    noteBody.contentEditable = 'true';
+    noteBody.focus();
+    noteEdit.style.display = 'none';
+    noteSave.style.display = '';
+    noteStatus.textContent = '';
+  });
+
+  noteSave.addEventListener('click', () => {
+    localStorage.setItem(NOTE_KEY, noteBody.innerText);
+    noteBody.contentEditable = 'false';
+    noteSave.style.display = 'none';
+    noteEdit.style.display = '';
+    noteStatus.textContent = '已保存';
+    setTimeout(() => { noteStatus.textContent = ''; }, 2000);
+  });
+
+  // 左侧导航切换 + 改动说明编辑保存, 供"模块细节对比"和"交互对比"两个区块复用
+  function setupModuleSection(navId, detailId, noteKeyPrefix) {
+    const nav = document.getElementById(navId);
+    const detail = document.getElementById(detailId);
+    if (!nav || !detail) return;
+
+    nav.addEventListener('click', (e) => {
+      const btn = e.target.closest('.module-nav-item');
+      if (!btn) return;
+      const key = btn.dataset.module;
+
+      nav.querySelectorAll('.module-nav-item').forEach(el => {
+        el.classList.toggle('active', el === btn);
+      });
+      detail.querySelectorAll('.module-panel').forEach(panel => {
+        panel.classList.toggle('active', panel.dataset.module === key);
+      });
+    });
+
+    detail.querySelectorAll('.module-panel').forEach(panel => {
+      const body = panel.querySelector('.note-body');
+      if (body) body.textContent = localStorage.getItem(noteKeyPrefix + panel.dataset.module) || '';
+    });
+
+    detail.addEventListener('click', (e) => {
+      const panel = e.target.closest('.module-panel');
+      if (!panel) return;
+      const key = panel.dataset.module;
+      const body = panel.querySelector('.note-body');
+      const status = panel.querySelector('.note-status');
+      const editBtn = panel.querySelector('.note-edit');
+      const saveBtn = panel.querySelector('.note-save');
+
+      if (e.target.closest('.note-edit')) {
+        body.contentEditable = 'true';
+        body.focus();
+        editBtn.style.display = 'none';
+        saveBtn.style.display = '';
+        status.textContent = '';
+      } else if (e.target.closest('.note-save')) {
+        localStorage.setItem(noteKeyPrefix + key, body.innerText);
+        body.contentEditable = 'false';
+        saveBtn.style.display = 'none';
+        editBtn.style.display = '';
+        status.textContent = '已保存';
+        setTimeout(() => { status.textContent = ''; }, 2000);
+      }
+    });
+  }
+
+  setupModuleSection('module-nav', 'module-detail', 'pc-compare-note-');
+  setupModuleSection('interaction-nav', 'interaction-detail', 'pc-compare-inote-');
+
+  // 交互对比 - 点击视频卡片放大播放
+  const videoModal = document.getElementById('video-modal');
+  const videoModalPlayer = document.getElementById('video-modal-player');
+
+  function openVideoModal(src) {
+    if (!src) return;
+    videoModalPlayer.src = src;
+    videoModal.classList.add('open');
+    videoModalPlayer.play().catch(() => {});
+  }
+  function closeVideoModal() {
+    videoModal.classList.remove('open');
+    videoModalPlayer.pause();
+    videoModalPlayer.removeAttribute('src');
+    videoModalPlayer.load();
+  }
+
+  document.getElementById('interaction-detail').addEventListener('click', (e) => {
+    const card = e.target.closest('.video-card');
+    if (!card || card.classList.contains('has-error')) return;
+    if (e.target.closest('.module-note-box')) return;
+    openVideoModal(card.dataset.src);
+  });
+  videoModal.addEventListener('click', (e) => {
+    if (e.target.closest('.video-modal-content') && !e.target.closest('.video-modal-close')) return;
+    closeVideoModal();
+  });
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && videoModal.classList.contains('open')) closeVideoModal();
+  });
+</script>
+
+</body>
+</html>
