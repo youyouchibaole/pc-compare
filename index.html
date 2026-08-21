@@ -85,7 +85,7 @@
   }
   .inline-title {
     margin: 0;
-    font-size: 15px;
+    font-size: 20px;
     font-weight: 600;
     color: var(--text);
     letter-spacing: 0.3px;
@@ -212,7 +212,7 @@
   .section-title {
     max-width: 1400px;
     margin: 0 auto 16px;
-    font-size: 15px;
+    font-size: 20px;
     font-weight: 600;
     color: var(--text);
     letter-spacing: 0.3px;
@@ -614,7 +614,12 @@
         <button class="note-btn note-btn-primary" id="note-save" style="display:none;">保存</button>
       </div>
     </div>
-    <div class="note-body" id="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+    <div class="note-body" id="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…">1、设计系统更新,包含颜色系统、间距系统、排版系统、组件系统、图标系统.
+2、主次信息做了视觉层级处理,优先突出主要信息,减少页面信息臃肿; 不同信息模块之间分区更清晰,便于信息查找.
+3、可操作区域均统一增加了鼠标悬停和点击的动画效果,增强可操作区域用户感知.
+4、优化部分组件交互方式,更加便于用户操作.
+5、按照用户使用习惯、优化了信息排版和呈现顺序,方便用户查看和操作
+6、纯图标统一增加鼠标悬停气泡提示</div>
   </div>
 
   <h2 class="section-title module-section-title">模块细节对比</h2>
@@ -652,7 +657,9 @@
               <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
             </div>
           </div>
-          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…">1、导航样式和交互调整
+2、自选列表上下两行信息层级更加清晰,标签位置调整
+3、增加列表行间距,减轻视觉信息密度</div>
         </div>
       </div>
       <div class="module-panel" data-module="chart">
@@ -674,7 +681,10 @@
               <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
             </div>
           </div>
-          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…">1、优化了“现价线”、“持仓盈亏线“、”预警线“、”鼠标十字线“的视觉样式，弱化视觉展现，便于查看图表信息
+2、优化了预警线的添加、删除、管理、拖拽等交互，提升预警线的操作效率
+3、画线工具内的图标重新绘制，图标分割更加统一
+4、时段选择组件更新样式</div>
         </div>
       </div>
       <div class="module-panel" data-module="optionchain">
@@ -696,7 +706,9 @@
               <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
             </div>
           </div>
-          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…">1、常用功能平铺出来，便于快捷操作
+2、期权链表格提升买卖价可点击的视觉引导，变成按钮样式，并有气泡提示
+3、突出到期天数的展示</div>
         </div>
       </div>
       <div class="module-panel" data-module="multileg">
@@ -718,7 +730,9 @@
               <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
             </div>
           </div>
-          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…">1、优化多腿列表展示，组合合计单独展示，每个腿只展示”名称“、”到期日“、”行权价“、”类型“、”方向“、”数量“
+2、数量修改步进器点击热区更加大，便于操作
+3、腿信息展示和下单左右分区，信息更加清晰</div>
         </div>
       </div>
       <div class="module-panel" data-module="positions">
@@ -740,7 +754,7 @@
               <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
             </div>
           </div>
-          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…">持仓列表没有做大的改动，只是从表格的视觉和交互上做了细微调整，使页面更简洁</div>
         </div>
       </div>
       <div class="module-panel" data-module="quote">
@@ -762,7 +776,11 @@
               <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
             </div>
           </div>
-          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…">1、所属市场从标题栏下放到了图标区，减少文案拥挤，给备注功能让路
+2、信息分层，从原来用标题色块来区分，改成用分割线来区分，减少页面色块，页面更加轻量化，信息更加清晰
+3、将相关信息模块去掉，以图标的形式展示，通过鼠标悬浮到相关icon上，气泡展示详细信息。去掉之后逐笔和盘口信息能更快获取
+4、根据行业内用户使用习惯，将盘口、经纪商席位、逐笔的展示顺序改为了逐笔、盘口、经纪商席位
+5、图表视觉展示进一步优化，便于查看</div>
         </div>
       </div>
       <div class="module-panel" data-module="trade">
@@ -784,7 +802,9 @@
               <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
             </div>
           </div>
-          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…">1、操作表单对齐方式做了调整，左边是表单名称，右边是操作表单，视觉导向更加简单
+2、价格数量的步进器样式也做了调整，更加便于点击
+3、订单金额和状态和下单按钮固定在底部，便于表单过多的时候，能始终能看到订单金额和状态</div>
         </div>
       </div>
       <div class="module-panel" data-module="advtrade">
@@ -806,7 +826,7 @@
               <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
             </div>
           </div>
-          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…">同交易面板的修改</div>
         </div>
       </div>
     </div>
@@ -852,7 +872,7 @@
               <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
             </div>
           </div>
-          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…">导航操作更加简单，通过滚动或者菜单选择即可快速查看。同时导航tab过多的时候，也会占用自选列表页面高度</div>
         </div>
       </div>
       <div class="module-panel" data-module="chart">
@@ -881,7 +901,7 @@
               <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
             </div>
           </div>
-          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…">持仓盈亏线和预警线操作更加直观和快捷</div>
         </div>
       </div>
       <div class="module-panel" data-module="indicator">
@@ -910,7 +930,8 @@
               <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
             </div>
           </div>
-          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…">1、指标和画线工具的交互方式统一，点击后都是右侧更换到自身的相关操作
+2、指标将收藏的指标在页面中固定展示，便于快速操作，同时也预留了设置的功能，给用户留有更加复杂操作的入口</div>
         </div>
       </div>
       <div class="module-panel" data-module="optionchain">
@@ -939,7 +960,8 @@
               <button class="note-btn note-btn-primary note-save" style="display:none;">保存</button>
             </div>
           </div>
-          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…"></div>
+          <div class="note-body" contenteditable="false" data-placeholder="点击「编辑」填写改动说明…">1、将”行权价数量“”类型“”到期类型“”期权格式“等高频率操作平铺出来，提升操作效率。
+2、期权链交互更加清晰，买卖价增加气泡提示和按钮样式，便于引导用户去点击</div>
         </div>
       </div>
       <div class="module-panel" data-module="trade">
